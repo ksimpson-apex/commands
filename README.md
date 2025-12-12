@@ -137,3 +137,57 @@ See [pr_review.md](./pr_review.md) for detailed implementation.
 ## Contributing
 
 Feel free to submit issues or pull requests for new commands or improvements.
+
+## Forking and Syncing
+
+### Fork this repository
+
+1. Fork on GitHub (click the "Fork" button at the top right of the repository page)
+
+2. Clone your fork:
+```bash
+cd ~/.claude
+git clone https://github.com/YOUR_USERNAME/commands.git
+```
+
+3. Add the upstream remote:
+```bash
+cd ~/.claude/commands
+git remote add upstream https://github.com/ksimpson-apex/commands.git
+```
+
+### Keep your fork updated
+
+Sync your fork with the latest changes from the upstream repository:
+
+```bash
+# Fetch the latest changes from upstream
+git fetch upstream
+
+# Make sure you're on your main branch
+git checkout main
+
+# Merge upstream changes into your fork
+git merge upstream/main
+
+# Push the updates to your fork on GitHub
+git push origin main
+```
+
+**Alternative: Rebase instead of merge**
+
+If you prefer a cleaner history without merge commits:
+
+```bash
+# Fetch the latest changes from upstream
+git fetch upstream
+
+# Make sure you're on your main branch
+git checkout main
+
+# Rebase your changes on top of upstream
+git rebase upstream/main
+
+# Push the updates (may require force push if you've rebased)
+git push origin main --force-with-lease
+```
