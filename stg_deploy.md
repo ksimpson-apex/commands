@@ -3,8 +3,6 @@ allowed-tools: ["Bash(gh pr list *)", "Bash(gh pr view *)", "Bash(gh pr diff *)"
 description: Check the staging gitops PR and approve the PRs if they're current
 ---
 
-**Source:** [Useful Tips and Tricks for Claude](https://apexclearing.atlassian.net/wiki/spaces/TRDX/pages/8754135186/Useful+Tips+and+Tricks+for+Claude#Approving-staged-PRs-for-staging)
-
 ## Context
 
 Deployment PRs are in the https://github.com/apex-fintech-solutions/gitops/ repo.
