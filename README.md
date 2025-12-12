@@ -2,6 +2,18 @@
 
 A collection of custom slash commands for [Claude Code](https://claude.ai/code).
 
+## Table of Contents
+
+- [Installation](#installation)
+  - [For users WITHOUT existing commands](#for-users-without-existing-commands)
+  - [For users WITH existing commands](#for-users-with-existing-commands)
+  - [Alternative installation](#alternative-installation-for-users-with-existing-commands)
+- [Available Commands](#available-commands)
+- [Contributing](#contributing)
+- [Forking and Syncing](#forking-and-syncing)
+  - [Fork this repository](#fork-this-repository)
+  - [Keep your fork updated](#keep-your-fork-updated)
+
 ## Installation
 
 ### For users WITHOUT existing `~/.claude/commands/`
@@ -25,7 +37,11 @@ git clone https://github.com/ksimpson-apex/commands.git
 cp ~/.claude/commands-existing/*.md ~/.claude/commands/
 ```
 
+> **Note:** If you want to maintain your own fork and sync updates, see [Forking and Syncing](#forking-and-syncing) below instead of using this installation method.
+
 ### Alternative installation (for users with existing commands)
+
+> **Warning:** This method is mutually exclusive with [Forking and Syncing](#forking-and-syncing). Use this only if you don't plan to fork the repository.
 
 ```bash
 cd ~/.claude/commands
@@ -140,20 +156,39 @@ Feel free to submit issues or pull requests for new commands or improvements.
 
 ## Forking and Syncing
 
+> **Note:** This approach allows you to maintain your own personal commands while syncing updates from this repository. Your personal commands won't be clobbered when syncing.
+
 ### Fork this repository
 
 1. Fork on GitHub (click the "Fork" button at the top right of the repository page)
 
-2. Clone your fork:
+2. Back up existing commands (if you have any):
+```bash
+# Only if ~/.claude/commands already exists
+mv ~/.claude/commands ~/.claude/commands-existing
+```
+
+3. Clone your fork:
 ```bash
 cd ~/.claude
 git clone https://github.com/YOUR_USERNAME/commands.git
 ```
 
-3. Add the upstream remote:
+4. Add the upstream remote:
 ```bash
 cd ~/.claude/commands
 git remote add upstream https://github.com/ksimpson-apex/commands.git
+```
+
+5. (Optional) Add your personal commands to your fork:
+```bash
+# Copy any existing personal commands
+cp ~/.claude/commands-existing/*.md ~/.claude/commands/
+
+# Commit them to your fork
+git add *.md
+git commit -m "Add personal commands"
+git push origin main
 ```
 
 ### Keep your fork updated
