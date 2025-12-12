@@ -39,7 +39,8 @@ Note: This may fail if there are conflicting filenames between your existing com
 
 ## Available Commands
 
-### `/promote`
+<details>
+<summary><code>/promote</code> - Promote PR changes between environments</summary>
 
 Promote PR changes from one environment to other environments.
 
@@ -66,6 +67,72 @@ Promote PR changes from one environment to other environments.
 **Supported environments:** dev, stg, sbx, uat, rcn, prd
 
 See [promote.md](./promote.md) for detailed workflow documentation.
+
+</details>
+
+<details>
+<summary><code>/stg_deploy</code> - Approve staging gitops PRs</summary>
+
+Check the staging gitops PR and approve the PRs if they're current.
+
+**Source:** [Useful Tips and Tricks for Claude](https://apexclearing.atlassian.net/wiki/spaces/TRDX/pages/8754135186/Useful+Tips+and+Tricks+for+Claude#Approving-staged-PRs-for-staging)
+
+**What it does:**
+- Finds PRs opened in the last 3 days that contain "to stg" for specific services
+- Validates orchestrator PRs contain `orch-trading` OR `orch-assettradingconfig`
+- Compares version strings in manifests to dev versions
+- Approves PRs if version strings match
+- Reports approved PRs and any that were skipped with reasons
+
+**Targeted services:**
+- asset-trading-cfg
+- fractional-liquidations
+- open-orders
+- orchestrator
+- orders-service
+- svc-config-admin
+- trade-simulator
+
+See [stg_deploy.md](./stg_deploy.md) for detailed implementation.
+
+</details>
+
+<details>
+<summary><code>/pr_review</code> - Expert code review</summary>
+
+Expert code review specialist for quality, security, and maintainability.
+
+**Source:** [Useful Tips and Tricks for Claude](https://apexclearing.atlassian.net/wiki/spaces/TRDX/pages/8754135186/Useful+Tips+and+Tricks+for+Claude#PR-Review)
+
+**Usage:**
+```bash
+/pr_review <github-pr-url>
+```
+
+**Example:**
+```bash
+/pr_review https://github.com/apex-fintech-solutions/source/pull/123456
+```
+
+**Review checklist:**
+- Code is simple and readable
+- Functions and variables are well-named
+- No duplicated code
+- Proper error handling
+- No exposed secrets or API keys
+- Input validation implemented
+- Good test coverage
+- Performance considerations addressed
+
+**Focus areas:**
+- Logic errors and side effect risks
+- Correctness issues
+- Agreement with PR description and JIRA tickets
+- Security vulnerabilities
+
+See [pr_review.md](./pr_review.md) for detailed implementation.
+
+</details>
 
 ## Contributing
 
