@@ -114,36 +114,45 @@ Promote changes from a GitHub Pull Request to other environments.
 
 ## Phase 7: Create PRs for Target Environments
 
+15. Prompt for branch naming using AskUserQuestion:
+    - First question: "What JIRA ticket should be used as the prefix for the branch names?"
+      - No default provided - user must specify (e.g., "trex-4968")
+    - Second question: "What description should be used in the branch names?"
+      - No default provided - user must specify (e.g., "event-contract", "new-feature")
+    - Store these as JIRA_PREFIX and DESCRIPTION
+    - Always convert both to lowercase when constructing branch names
+
 For each target environment **in the determined order**:
 
-15. Create a new branch:
-    - Use the branch from source PR as the foundation of new branch name
-    - The source branch will likely start with a Jira ticket, for example "trex-1234". This is the JIRA_PREFIX.
-    - What follows will be the remainder of the new branch name with the target environment appended following a hyphen. This is the REMAINDER. If REMAINDER contains the source environment, the new branch name will replace source environment with target environment *instead of* appending.
+16. Create a new branch:
+    - Construct branch name: `<JIRA_PREFIX>-<DESCRIPTION>-<TARGET_ENV>` (all lowercase)
+    - Example: `trex-4968-event-contract-stg`
     ```bash
-    git checkout -b <JIRA_PREFIX>-<REMAINDER>
+    git checkout main
+    git checkout -b <lowercase_branch_name>
     ```
 
-16. For each changed file from the source PR:
+17. For each changed file from the source PR:
     - Determine the equivalent file path in the target environment by replacing the source environment name with the target environment name
     - Example: `config/dev/service.yaml` → `config/stg/service.yaml`
 
-17. Fetch the actual file content from the source PR:
+18. Fetch the diff from the source PR to understand what changed:
     ```bash
-    gh pr view <PR_NUMBER> --repo <ORG>/<REPO> --json files --jq '.files[] | select(.path=="<file_path>")'
+    gh pr diff <PR_NUMBER> --repo <ORG>/<REPO>
     ```
 
-    Then fetch the actual content from the PR branch:
-    ```bash
-    git fetch origin <PR_HEAD_REF>
-    git show origin/<PR_HEAD_REF>:<file_path>
-    ```
+19. Apply changes to the target environment files using ONLY the Edit tool:
+    - **CRITICAL:** NEVER copy files directly from one environment to another
+    - **CRITICAL:** NEVER use sed commands or bash scripts to apply changes
+    - **CRITICAL:** ALWAYS use the Read tool first to read the existing target environment file
+    - **CRITICAL:** ALWAYS use the Edit tool to apply specific changes from the source PR diff to the target file
+    - The Edit tool allows precise string replacements that preserve environment-specific differences
+    - If a line needs to be added, use Edit to insert it at the correct location
+    - If a line needs to be removed, use Edit to remove it
+    - Read the target environment file first, then apply each change individually using Edit
+    - Repeat for each file that needs to be updated
 
-18. Apply the changes to the target environment files:
-    - Use the Edit or Write tool to update the target file with the content from the source file
-    - If the file doesn't exist in the target environment, create it
-
-19. Commit the changes:
+20. Commit the changes:
     ```bash
     git add .
     git commit -m "Promote changes from PR #<PR_NUMBER> to <target_env>
@@ -157,30 +166,33 @@ For each target environment **in the determined order**:
     Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
     ```
 
-20. Push the branch:
+21. Push the branch:
     ```bash
-    git push -u origin <JIRA_PREFIX>-<REMAINDER>
+    git push -u origin <lowercase_branch_name>
     ```
 
-21. Prepare the PR body:
+22. Prepare the PR body:
     - Start with the source PR body as a template
     - Look for sections that reference other environment PRs (e.g., "Lower environment PRs:", "Related PRs:", "Dependencies:")
-    - If found, update these sections to include links to PRs created in previous iterations (lower-ranked environments)
-    - Example: If creating a PR for `prd` and already created PRs for `stg` and `uat`:
+    - If found, update these sections to include a bullet list of all lower environment PRs with:
+      - **FIRST:** Always list the original source PR (e.g., `dev (#8792)`)
+      - **THEN:** List all intermediate environment PRs in order (e.g., `stg (#8889)`, `uat (#8891)`)
+    - If no such sections exist in the source PR, append a new section at the end with the exact header:
       ```
-      Lower environment PRs:
-      - stg: #<STG_PR_NUMBER>
-      - uat: #<UAT_PR_NUMBER>
+      Link to merged PR in lower environment (if not dev)
       ```
-    - If no such sections exist in the source PR, append a new section at the end:
+    - Under this header, add a bullet list (hyphen-prefixed) of all lower environment PRs:
+      - First bullet: original source PR
+      - Subsequent bullets: intermediate environment PRs in order
+    - Example for a `prd` PR with original `dev` (#8792) and intermediate `stg` (#8889), `uat` (#8891):
       ```
-      ---
-      **Promoted from:** #<SOURCE_PR_NUMBER> (<source_env>)
-      **Lower environment PRs:**
-      <list of PRs created for environments ranked lower than current target>
+      Link to merged PR in lower environment (if not dev)
+      - dev (#8792)
+      - stg (#8889)
+      - uat (#8891)
       ```
 
-22. Create the PR in draft mode:
+23. Create the PR in draft mode:
     ```bash
     gh pr create \
       --draft \
@@ -188,20 +200,36 @@ For each target environment **in the determined order**:
       --body "<PREPARED_PR_BODY>"
     ```
 
-23. Store the created PR URL and number for use in subsequent iterations (for updating "Lower environment PRs" sections)
+24. Store the created PR URL and number for use in subsequent iterations (for updating the lower environment PRs bullet list)
 
-24. Return to the original branch:
+25. Return to the original branch:
     ```bash
-    git checkout -
+    git checkout main
     ```
 
 ## Phase 8: Summary
 
-25. Display a summary of created PRs with their URLs for easy access, ordered by environment rank.
+26. Display a summary of created PRs in a format that can be pasted into Slack:
+    - Use checkbox format: `[ ]` followed by environment name and clickable PR URL
+    - Order PRs by environment rank (stg → sbx → uat → rcn → prd)
+    - Format example:
+      ```
+      [ ] stg: https://github.com/org/repo/pull/8889
+      [ ] sbx: https://github.com/org/repo/pull/8890
+      [ ] uat: https://github.com/org/repo/pull/8891
+      [ ] rcn: https://github.com/org/repo/pull/8892
+      [ ] prd: https://github.com/org/repo/pull/8893
+      ```
+    - This format allows users to check off PRs as they are reviewed/merged in Slack
 
 ---
 
 **Important Notes:**
+- **CRITICAL:** NEVER copy files from one environment to another - always use Edit tool to apply changes
+- **CRITICAL:** NEVER use sed commands or bash scripts to apply changes - only use Edit tool
+- **CRITICAL:** Always prompt user for JIRA ticket prefix and description before creating branches
+- **CRITICAL:** Always convert branch names to lowercase
+- **CRITICAL:** Always list the original source PR first in the lower environment PRs bullet list
 - The command should handle cases where target environment files don't exist yet
 - Preserve any environment-specific differences (e.g., don't blindly copy URLs or secrets)
 - Use TodoWrite to track progress through the phases
