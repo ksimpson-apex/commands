@@ -171,7 +171,17 @@ For each target environment **in the determined order**:
     git push -u origin <lowercase_branch_name>
     ```
 
-22. Prepare the PR body:
+22. Prepare the PR title:
+    - Take the source PR title
+    - Replace any mention of the source environment with the target environment
+    - Common patterns to replace:
+      - "to dev environment" → "to <target_env> environment"
+      - "in dev" → "in <target_env>"
+      - "dev environment" → "<target_env> environment"
+      - "for dev" → "for <target_env>"
+    - Example: "TREX-4908: Add market-simulator-v2 project to dev environment" → "TREX-4908: Add market-simulator-v2 project to stg environment"
+
+23. Prepare the PR body:
     - Start with the source PR body as a template
     - Look for sections that reference other environment PRs (e.g., "Lower environment PRs:", "Related PRs:", "Dependencies:")
     - If found, update these sections to include a bullet list of all lower environment PRs with:
@@ -192,24 +202,24 @@ For each target environment **in the determined order**:
       - uat (#8891)
       ```
 
-23. Create the PR in draft mode:
+24. Create the PR in draft mode:
     ```bash
     gh pr create \
       --draft \
-      --title "<SOURCE_PR_TITLE>" \
+      --title "<PREPARED_PR_TITLE>" \
       --body "<PREPARED_PR_BODY>"
     ```
 
-24. Store the created PR URL and number for use in subsequent iterations (for updating the lower environment PRs bullet list)
+25. Store the created PR URL and number for use in subsequent iterations (for updating the lower environment PRs bullet list)
 
-25. Return to the original branch:
+26. Return to the original branch:
     ```bash
     git checkout main
     ```
 
 ## Phase 8: Summary
 
-26. Display a summary of created PRs in a format that can be pasted into Slack:
+27. Display a summary of created PRs in a format that can be pasted into Slack:
     - Use checkbox format: `[ ]` followed by environment name and clickable PR URL
     - Order PRs by environment rank (stg → sbx → uat → rcn → prd)
     - Format example:
@@ -229,6 +239,7 @@ For each target environment **in the determined order**:
 - **CRITICAL:** NEVER use sed commands or bash scripts to apply changes - only use Edit tool
 - **CRITICAL:** Always prompt user for JIRA ticket prefix and description before creating branches
 - **CRITICAL:** Always convert branch names to lowercase
+- **CRITICAL:** Always update the PR title to replace the source environment with the target environment
 - **CRITICAL:** Always list the original source PR first in the lower environment PRs bullet list
 - The command should handle cases where target environment files don't exist yet
 - Preserve any environment-specific differences (e.g., don't blindly copy URLs or secrets)
