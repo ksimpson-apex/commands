@@ -151,10 +151,11 @@ For each target environment **in the determined order**:
     - If a line needs to be removed, use Edit to remove it
     - Read the target environment file first, then apply each change individually using Edit
     - Repeat for each file that needs to be updated
+    - **CRITICAL:** Keep track of all files that were modified (build a list of target file paths as you apply changes)
 
 20. Commit the changes:
     ```bash
-    git add .
+    git add <file1> <file2> <file3> ...
     git commit -m "Promote changes from PR #<PR_NUMBER> to <target_env>
 
     Original PR: <PR_URL>
@@ -237,6 +238,7 @@ For each target environment **in the determined order**:
 **Important Notes:**
 - **CRITICAL:** NEVER copy files from one environment to another - always use Edit tool to apply changes
 - **CRITICAL:** NEVER use sed commands or bash scripts to apply changes - only use Edit tool
+- **CRITICAL:** ONLY add files that were modified as part of applying the PR changes - track which files you edit and only `git add` those specific files
 - **CRITICAL:** Always prompt user for JIRA ticket prefix and description before creating branches
 - **CRITICAL:** Always convert branch names to lowercase
 - **CRITICAL:** Always update the PR title to replace the source environment with the target environment
