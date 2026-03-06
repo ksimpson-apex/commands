@@ -4,56 +4,44 @@ A collection of custom slash commands for [Claude Code](https://claude.ai/code).
 
 ## Table of Contents
 
+- [Available Commands](#available-commands)
 - [Installation](#installation)
   - [For users WITHOUT existing commands](#for-users-without-existing-commands)
   - [For users WITH existing commands](#for-users-with-existing-commands)
   - [Alternative installation](#alternative-installation-for-users-with-existing-commands)
-- [Available Commands](#available-commands)
 - [Contributing](#contributing)
 - [Forking and Syncing](#forking-and-syncing)
   - [Fork this repository](#fork-this-repository)
   - [Keep your fork updated](#keep-your-fork-updated)
 
-## Installation
-
-### For users WITHOUT existing `~/.claude/commands/`
-
-```bash
-cd ~/.claude
-git clone https://github.com/ksimpson-apex/commands.git
-```
-
-### For users WITH existing commands
-
-```bash
-# Temporarily rename existing
-mv ~/.claude/commands ~/.claude/commands-existing
-
-# Clone fresh
-cd ~/.claude
-git clone https://github.com/ksimpson-apex/commands.git
-
-# Copy back any personal commands
-cp ~/.claude/commands-existing/*.md ~/.claude/commands/
-```
-
-> **Note:** If you want to maintain your own fork and sync updates, see [Forking and Syncing](#forking-and-syncing) below instead of using this installation method.
-
-### Alternative installation (for users with existing commands)
-
-> **Warning:** This method is mutually exclusive with [Forking and Syncing](#forking-and-syncing). Use this only if you don't plan to fork the repository.
-
-```bash
-cd ~/.claude/commands
-git init
-git remote add origin https://github.com/ksimpson-apex/commands.git
-git fetch origin
-git checkout main
-```
-
-Note: This may fail if there are conflicting filenames between your existing commands and the repository.
-
 ## Available Commands
+
+<details>
+<summary><code>/ateam</code> - Create collaborative agent teams</summary>
+
+Create an agent team for collaborative tasks.
+
+**Usage:**
+```bash
+/ateam help                    # Display available agents table
+/ateam                         # Create a new agent team (interactive)
+/ateam <task description>      # Create team with task description
+```
+
+**Examples:**
+```bash
+/ateam help                    # Show all available agents and their focus areas
+/ateam                         # Prompts for team members and task
+```
+
+**What it does:**
+- With "help" argument: displays a table of all available agents from `~/.claude/agents/`
+- Without "help": guides you to select agents and assign them a collaborative task
+- Works seamlessly with custom agents from [ksimpson-apex/agents](https://github.com/ksimpson-apex/agents)
+
+See [ateam.md](./ateam.md) for detailed implementation.
+
+</details>
 
 <details>
 <summary><code>/promote</code> - Promote PR changes between environments</summary>
@@ -149,6 +137,45 @@ Expert code review specialist for quality, security, and maintainability.
 See [pr_review.md](./pr_review.md) for detailed implementation.
 
 </details>
+
+## Installation
+
+### For users WITHOUT existing `~/.claude/commands/`
+
+```bash
+cd ~/.claude
+git clone https://github.com/ksimpson-apex/commands.git
+```
+
+### For users WITH existing commands
+
+```bash
+# Temporarily rename existing
+mv ~/.claude/commands ~/.claude/commands-existing
+
+# Clone fresh
+cd ~/.claude
+git clone https://github.com/ksimpson-apex/commands.git
+
+# Copy back any personal commands
+cp ~/.claude/commands-existing/*.md ~/.claude/commands/
+```
+
+> **Note:** If you want to maintain your own fork and sync updates, see [Forking and Syncing](#forking-and-syncing) below instead of using this installation method.
+
+### Alternative installation (for users with existing commands)
+
+> **Warning:** This method is mutually exclusive with [Forking and Syncing](#forking-and-syncing). Use this only if you don't plan to fork the repository.
+
+```bash
+cd ~/.claude/commands
+git init
+git remote add origin https://github.com/ksimpson-apex/commands.git
+git fetch origin
+git checkout main
+```
+
+Note: This may fail if there are conflicting filenames between your existing commands and the repository.
 
 ## Contributing
 
